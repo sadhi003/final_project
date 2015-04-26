@@ -2,18 +2,22 @@
 
 # require packages for this work
 
-packages <- c("data.table", "reshape2")
+packages <- c("data.table", "reshape2", "downloader")
 sapply(packages, require, character.only = TRUE, quietly = TRUE)
 
-library(downloader)
-url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+# here commented the file download and unzip process
+#url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 
-download(url, dest="Dataset.zip", mode="wb") 
+#download(url, dest="Dataset.zip", mode="wb") 
 
-unzip ("dataset.zip", exdir = "./")
+#unzip ("dataset.zip", exdir = "./")
 
-setwd("/Users/shankar/R_programming/Verified_CourseWork/UCI HAR Dataset/")
 
+# setting the working directory inside the document file
+#setwd("/Users/shankar/R_programming/Verified_CourseWork/UCI HAR Dataset/")
+
+
+#when the run_analysis.R is in UCI HAR Dataset directory
 
 # read the data set
 xDataTrain <- read.table("train/X_train.txt",header=FALSE)
