@@ -1,9 +1,9 @@
-#  Project For Getting and Cleaning Data
+# R script for tidy data
 
-# Shankar Adhikari
+# require packages for this work
 
-# 04/20/2015
-
+packages <- c("data.table", "reshape2")
+sapply(packages, require, character.only = TRUE, quietly = TRUE)
 
 library(downloader)
 url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
@@ -15,7 +15,7 @@ unzip ("dataset.zip", exdir = "./")
 setwd("/Users/shankar/R_programming/Verified_CourseWork/UCI HAR Dataset/")
 
 
-
+# read the data set
 xDataTrain <- read.table("train/X_train.txt",header=FALSE)
 xDataTest  <- read.table("test/X_test.txt",header=FALSE)
 yDataTrain <- read.table("train/Y_train.txt",header=FALSE)
@@ -23,7 +23,7 @@ yDataTest  <- read.table("test/Y_test.txt",header=FALSE)
 sDataTrain <- read.table("train/subject_train.txt",header=FALSE)
 sDataTest  <- read.table("test/subject_test.txt",header=FALSE)
 
-
+# read features and assign to the data set
 features <- read.table("features.txt",header=FALSE)
 names(xDataTrain) <- features[,2]
 names(xDataTest)  <- features[,2]
@@ -43,25 +43,27 @@ sDataCombine <- rbind(sDataTrain, sDataTest)
 
 data <- cbind(xDataCombine, yDataCombine, sDataCombine)
 
-#write.table(data, "data.txt")
 
+# take only mean and std data from whole set
 selectCol <- grep("mean|std|Class|Subject",ignore.case = TRUE, names(data))
 data <- data[,selectCol]
 
+# read activities and merge into data
 activities <- read.table("activity_labels.txt")
 activities[,2] = gsub("_", "", tolower(as.character(activities[,2])))
 names(activities) <- c("Class_Label", "Class_Name")
 data <- merge(x=data, y=activities, by.x="Class_Label", by.y="Class_Label" )
 
+# make human readable the features
 names(data) <- gsub(pattern="[()]", replacement="", names(data))
 names(data) <- gsub(pattern="[-]", replacement="_", names(data))
 
 data <- data[,!(names(data) %in% c("Class_Label"))]
-library(reshape2)
-meltdataset <- melt(data=data, id=c("SubjectID", "Class_Name"))
 
+mData <- melt(data=data, id=c("SubjectID", "Class_Name"))
+tidyData <- dcast(data=mData, SubjectID + Class_Name ~ variable, mean)
 
-
+write.table(tidyData, "tidyData.txt", row.names = FALSE)
 
 
 
